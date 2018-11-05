@@ -1,3 +1,4 @@
+//{{{
 #ifndef UNICODE
 #define UNICODE
 #endif
@@ -26,9 +27,10 @@
 
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
 
-#define ID_ABOUT	0x1000
-#define ID_DOCINFO	0x1001
-
+#define ID_ABOUT  0x1000
+#define ID_DOCINFO  0x1001
+//}}}
+//{{{
 static HWND hwndframe = NULL;
 static HWND hwndview = NULL;
 static HDC hdc;
@@ -47,17 +49,14 @@ static pdfapp_t gapp;
 
 static wchar_t wbuf[PATH_MAX];
 static char filename[PATH_MAX];
-
-/*
- * Create registry keys to associate MuPDF with PDF and XPS files.
- */
+//}}}
 
 #define OPEN_KEY(parent, name, ptr) \
 	RegCreateKeyExA(parent, name, 0, 0, 0, KEY_WRITE, 0, &ptr, 0)
-
 #define SET_KEY(parent, name, value) \
 	RegSetValueExA(parent, name, 0, REG_SZ, (const BYTE *)(value), (DWORD)strlen(value) + 1)
 
+//{{{
 void install_app(char *argv0)
 {
 	char buf[512];
@@ -101,22 +100,22 @@ void install_app(char *argv0)
 	RegCloseKey(classes);
 	RegCloseKey(software);
 }
+//}}}
 
-/*
- * Dialog boxes
- */
-
+//{{{
 void winwarn(pdfapp_t *app, char *msg)
 {
 	MessageBoxA(hwndframe, msg, "MuPDF: Warning", MB_ICONWARNING);
 }
-
+//}}}
+//{{{
 void winerror(pdfapp_t *app, char *msg)
 {
 	MessageBoxA(hwndframe, msg, "MuPDF: Error", MB_ICONERROR);
 	exit(1);
 }
-
+//}}}
+//{{{
 void winalert(pdfapp_t *app, pdf_alert_event *alert)
 {
 	int buttons = MB_OK;
@@ -172,12 +171,14 @@ void winalert(pdfapp_t *app, pdf_alert_event *alert)
 		alert->button_pressed = PDF_ALERT_BUTTON_YES;
 	}
 }
-
+//}}}
+//{{{
 void winprint(pdfapp_t *app)
 {
 	MessageBoxA(hwndframe, "The MuPDF library supports printing, but this application currently does not", "Print document", MB_ICONWARNING);
 }
-
+//}}}
+//{{{
 int winsavequery(pdfapp_t *app)
 {
 	switch(MessageBoxA(hwndframe, "File has unsaved changes. Do you want to save", "MuPDF", MB_YESNOCANCEL))
@@ -187,7 +188,8 @@ int winsavequery(pdfapp_t *app)
 	default: return CANCEL;
 	}
 }
-
+//}}}
+//{{{
 int winquery(pdfapp_t *app, const char *query)
 {
 	switch(MessageBoxA(hwndframe, query, "MuPDF", MB_YESNOCANCEL))
@@ -197,7 +199,8 @@ int winquery(pdfapp_t *app, const char *query)
 	default: return QUERY_NO;
 	}
 }
-
+//}}}
+//{{{
 int winfilename(wchar_t *buf, int len)
 {
 	OPENFILENAME ofn;
@@ -213,7 +216,8 @@ int winfilename(wchar_t *buf, int len)
 	ofn.Flags = OFN_FILEMUSTEXIST|OFN_HIDEREADONLY;
 	return GetOpenFileNameW(&ofn);
 }
-
+//}}}
+//{{{
 int wingetcertpath(char *buf, int len)
 {
 	wchar_t twbuf[PATH_MAX] = {0};
@@ -244,7 +248,8 @@ int wingetcertpath(char *buf, int len)
 		return 0;
 	}
 }
-
+//}}}
+//{{{
 int wingetsavepath(pdfapp_t *app, char *buf, int len)
 {
 	wchar_t twbuf[PATH_MAX];
@@ -278,7 +283,8 @@ int wingetsavepath(pdfapp_t *app, char *buf, int len)
 		return 0;
 	}
 }
-
+//}}}
+//{{{
 void winreplacefile(char *source, char *target)
 {
 	wchar_t wsource[PATH_MAX];
@@ -305,7 +311,8 @@ void winreplacefile(char *source, char *target)
 	MoveFile(wsource, wtarget);
 #endif
 }
-
+//}}}
+//{{{
 void wincopyfile(char *source, char *target)
 {
 	wchar_t wsource[PATH_MAX];
@@ -327,6 +334,7 @@ void wincopyfile(char *source, char *target)
 
 	CopyFile(wsource, wtarget, FALSE);
 }
+//}}}
 
 static char pd_filename[256] = "The file is encrypted.";
 static char pd_password[256] = "";
@@ -339,8 +347,8 @@ static const char **cd_opts;
 static const char **cd_vals;
 static int pd_okay = 0;
 
-INT_PTR CALLBACK
-dlogpassproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+//{{{
+INT_PTR CALLBACK dlogpassproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch(message)
 	{
@@ -365,9 +373,9 @@ dlogpassproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	return FALSE;
 }
-
-INT_PTR CALLBACK
-dlogtextproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+//}}}
+//{{{
+INT_PTR CALLBACK dlogtextproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch(message)
 	{
@@ -402,9 +410,9 @@ dlogtextproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	return FALSE;
 }
-
-INT_PTR CALLBACK
-dlogchoiceproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+//}}}
+//{{{
+INT_PTR CALLBACK dlogchoiceproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	HWND listbox;
 	int i;
@@ -450,7 +458,9 @@ dlogchoiceproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	return FALSE;
 }
+//}}}
 
+//{{{
 char *winpassword(pdfapp_t *app, char *filename)
 {
 	char buf[1024], *s;
@@ -477,7 +487,8 @@ char *winpassword(pdfapp_t *app, char *filename)
 		return pd_password;
 	return NULL;
 }
-
+//}}}
+//{{{
 char *wintextinput(pdfapp_t *app, char *inittext, int retry)
 {
 	int code;
@@ -490,7 +501,8 @@ char *wintextinput(pdfapp_t *app, char *inittext, int retry)
 		return td_textinput;
 	return NULL;
 }
-
+//}}}
+//{{{
 int winchoiceinput(pdfapp_t *app, int nopts, const char *opts[], int *nvals, const char *vals[])
 {
 	int code;
@@ -503,9 +515,10 @@ int winchoiceinput(pdfapp_t *app, int nopts, const char *opts[], int *nvals, con
 		winerror(app, "cannot create text input dialog");
 	return pd_okay;
 }
+//}}}
 
-INT_PTR CALLBACK
-dloginfoproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+//{{{
+INT_PTR CALLBACK dloginfoproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	char buf[256];
 	wchar_t bufx[256];
@@ -577,16 +590,18 @@ dloginfoproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	return FALSE;
 }
-
+//}}}
+//{{{
 void info()
 {
 	int code = DialogBoxW(NULL, L"IDD_DLOGINFO", hwndframe, dloginfoproc);
 	if (code <= 0)
 		winerror(&gapp, "cannot create info dialog");
 }
+//}}}
 
-INT_PTR CALLBACK
-dlogaboutproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+//{{{
+INT_PTR CALLBACK dlogaboutproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch(message)
 	{
@@ -600,18 +615,17 @@ dlogaboutproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	return FALSE;
 }
-
+//}}}
+//{{{
 void winhelp(pdfapp_t*app)
 {
 	int code = DialogBoxW(NULL, L"IDD_DLOGABOUT", hwndframe, dlogaboutproc);
 	if (code <= 0)
 		winerror(&gapp, "cannot create help dialog");
 }
+//}}}
 
-/*
- * Main window
- */
-
+//{{{
 void winopen()
 {
 	WNDCLASS wc;
@@ -713,15 +727,17 @@ void winopen()
 
 	SetCursor(arrowcurs);
 }
-
-static void
-do_close(pdfapp_t *app)
+//}}}
+//{{{
+static void do_close(pdfapp_t *app)
 {
 	fz_context *ctx = app->ctx;
 	pdfapp_close(app);
 	free(dibinf);
 	fz_drop_context(ctx);
 }
+//}}}
+//{{{
 
 void winclose(pdfapp_t *app)
 {
@@ -731,7 +747,9 @@ void winclose(pdfapp_t *app)
 		exit(0);
 	}
 }
+//}}}
 
+//{{{
 void wincursor(pdfapp_t *app, int curs)
 {
 	if (curs == ARROW)
@@ -743,7 +761,8 @@ void wincursor(pdfapp_t *app, int curs)
 	if (curs == CARET)
 		SetCursor(caretcurs);
 }
-
+//}}}
+//{{{
 void wintitle(pdfapp_t *app, char *title)
 {
 	wchar_t wide[256], *dp;
@@ -761,7 +780,8 @@ void wintitle(pdfapp_t *app, char *title)
 
 	SetWindowTextW(hwndframe, wide);
 }
-
+//}}}
+//{{{
 void windrawrect(pdfapp_t *app, int x0, int y0, int x1, int y1)
 {
 	RECT r;
@@ -771,14 +791,16 @@ void windrawrect(pdfapp_t *app, int x0, int y0, int x1, int y1)
 	r.bottom = y1;
 	FillRect(hdc, &r, (HBRUSH)GetStockObject(WHITE_BRUSH));
 }
-
+//}}}
+//{{{
 void windrawstring(pdfapp_t *app, int x, int y, char *s)
 {
 	HFONT font = (HFONT)GetStockObject(ANSI_FIXED_FONT);
 	SelectObject(hdc, font);
 	TextOutA(hdc, x, y - 12, s, (int)strlen(s));
 }
-
+//}}}
+//{{{
 void winblitsearch()
 {
 	if (gapp.issearching)
@@ -789,7 +811,8 @@ void winblitsearch()
 		windrawstring(&gapp, 10, 20, buf);
 	}
 }
-
+//}}}
+//{{{
 void winblit()
 {
 	int image_w = fz_pixmap_width(gapp.ctx, gapp.image);
@@ -877,7 +900,8 @@ void winblit()
 
 	winblitsearch();
 }
-
+//}}}
+//{{{
 void winresize(pdfapp_t *app, int w, int h)
 {
 	ShowWindow(hwndframe, SW_SHOWDEFAULT);
@@ -886,19 +910,22 @@ void winresize(pdfapp_t *app, int w, int h)
 	h += GetSystemMetrics(SM_CYCAPTION);
 	SetWindowPos(hwndframe, 0, 0, 0, w, h, SWP_NOZORDER | SWP_NOMOVE);
 }
-
+//}}}
+//{{{
 void winrepaint(pdfapp_t *app)
 {
 	InvalidateRect(hwndview, NULL, 0);
 }
-
+//}}}
+//{{{
 void winrepaintsearch(pdfapp_t *app)
 {
 	// TODO: invalidate only search area and
 	// call only search redraw routine.
 	InvalidateRect(hwndview, NULL, 0);
 }
-
+//}}}
+//{{{
 void winfullscreen(pdfapp_t *app, int state)
 {
 	static WINDOWPLACEMENT savedplace;
@@ -919,11 +946,8 @@ void winfullscreen(pdfapp_t *app, int state)
 		isfullscreen = 0;
 	}
 }
-
-/*
- * Event handling
- */
-
+//}}}
+//{{{
 void windocopy(pdfapp_t *app)
 {
 	HGLOBAL handle;
@@ -947,32 +971,38 @@ void windocopy(pdfapp_t *app)
 	SetClipboardData(CF_UNICODETEXT, handle);
 	CloseClipboard();
 
-	justcopied = 1;	/* keep inversion around for a while... */
+	justcopied = 1; /* keep inversion around for a while... */
 }
-
+//}}}
+//{{{
 void winreloadpage(pdfapp_t *app)
 {
 	SendMessage(hwndview, WM_APP, 0, 0);
 }
-
+//}}}
+//{{{
 void winopenuri(pdfapp_t *app, char *buf)
 {
 	ShellExecuteA(hwndframe, "open", buf, 0, 0, SW_SHOWNORMAL);
 }
+//}}}
 
 #define OUR_TIMER_ID 1
-
+//{{{
 void winadvancetimer(pdfapp_t *app, float delay)
 {
 	timer_pending = 1;
 	SetTimer(hwndview, OUR_TIMER_ID, (unsigned int)(1000*delay), NULL);
 }
-
+//}}}
+//{{{
 static void killtimer(pdfapp_t *app)
 {
 	timer_pending = 0;
 }
+//}}}
 
+//{{{
 void handlekey(int c)
 {
 	int modifier = (GetAsyncKeyState(VK_SHIFT) < 0);
@@ -1009,7 +1039,8 @@ void handlekey(int c)
 	pdfapp_onkey(&gapp, c, modifier);
 	winrepaint(&gapp);
 }
-
+//}}}
+//{{{
 void handlemouse(int x, int y, int btn, int state)
 {
 	int modifier = (GetAsyncKeyState(VK_SHIFT) < 0);
@@ -1031,9 +1062,9 @@ void handlemouse(int x, int y, int btn, int state)
 
 	pdfapp_onmouse(&gapp, x, y, btn, modifier, state);
 }
-
-LRESULT CALLBACK
-frameproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+//}}}
+//{{{
+LRESULT CALLBACK frameproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch(message)
 	{
@@ -1089,9 +1120,9 @@ frameproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	return DefWindowProc(hwnd, message, wParam, lParam);
 }
-
-LRESULT CALLBACK
-viewproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+//}}}
+//{{{
+LRESULT CALLBACK viewproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static int oldx = 0;
 	static int oldy = 0;
@@ -1203,7 +1234,7 @@ viewproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case VK_NEXT:
 		case VK_ESCAPE:
 			handlekey(wParam + 256);
-			handlemouse(oldx, oldy, 0, 0);	/* update cursor */
+			handlemouse(oldx, oldy, 0, 0);  /* update cursor */
 			return 0;
 		}
 		return 1;
@@ -1213,7 +1244,7 @@ viewproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (wParam < 256)
 		{
 			handlekey(wParam);
-			handlemouse(oldx, oldy, 0, 0);	/* update cursor */
+			handlemouse(oldx, oldy, 0, 0);  /* update cursor */
 		}
 		return 0;
 
@@ -1228,11 +1259,11 @@ viewproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	/* Pass on unhandled events to Windows */
 	return DefWindowProc(hwnd, message, wParam, lParam);
 }
+//}}}
 
 typedef BOOL (SetProcessDPIAwareFn)(void);
-
-static int
-get_system_dpi(void)
+//{{{
+static int get_system_dpi(void)
 {
 	HMODULE hUser32 = LoadLibrary(TEXT("user32.dll"));
 	SetProcessDPIAwareFn *ptr;
@@ -1250,7 +1281,8 @@ get_system_dpi(void)
 	/* hdpi,vdpi = 100 means 96dpi. */
 	return ((hdpi + vdpi) * 96 + 0.5f) / 200;
 }
-
+//}}}
+//{{{
 static void usage(void)
 {
 	fprintf(stderr, "usage: mupdf [options] file.pdf [page]\n");
@@ -1266,9 +1298,9 @@ static void usage(void)
 	fprintf(stderr, "\t-X\tdisable document styles for EPUB layout\n");
 	exit(1);
 }
-
-int WINAPI
-WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+//}}}
+//{{{
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
 	int argc;
 	LPWSTR *wargv = CommandLineToArgvW(GetCommandLineW(), &argc);
@@ -1356,3 +1388,4 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShow
 
 	return 0;
 }
+//}}}
