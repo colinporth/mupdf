@@ -20,6 +20,12 @@
 #endif
 //}}}
 //{{{
+enum
+{
+  PDFAPP_OUTLINE_DEFERRED = 1,
+  PDFAPP_OUTLINE_LOAD_NOW = 2
+};
+
 enum panning
 {
   DONT_PAN = 0,
@@ -27,19 +33,12 @@ enum panning
   PAN_TO_BOTTOM
 };
 //}}}
-//{{{
-enum
-{
-  PDFAPP_OUTLINE_DEFERRED = 1,
-  PDFAPP_OUTLINE_LOAD_NOW = 2
-};
-//}}}
 
 static void pdfapp_showpage(pdfapp_t *app, int loadpage, int drawpage, int repaint, int transition, int searching);
 static void pdfapp_updatepage(pdfapp_t *app);
 static const int zoomlist[] = { 18, 24, 36, 54, 72, 96, 120, 144, 180, 216, 288 };
 //{{{
-static int zoom_in(int oldres)
+static int zoom_in (int oldres)
 {
   int i;
   for (i = 0; i < nelem(zoomlist) - 1; ++i)
@@ -49,7 +48,7 @@ static int zoom_in(int oldres)
 }
 //}}}
 //{{{
-static int zoom_out(int oldres)
+static int zoom_out (int oldres)
 {
   int i;
   for (i = 0; i < nelem(zoomlist) - 1; ++i)
@@ -60,7 +59,7 @@ static int zoom_out(int oldres)
 //}}}
 
 //{{{
-static void pdfapp_warn(pdfapp_t *app, const char *fmt, ...)
+static void pdfapp_warn( pdfapp_t *app, const char *fmt, ...)
 {
   char buf[1024];
   va_list ap;
@@ -72,13 +71,13 @@ static void pdfapp_warn(pdfapp_t *app, const char *fmt, ...)
 }
 //}}}
 //{{{
-static void pdfapp_error(pdfapp_t *app, char *msg)
+static void pdfapp_error (pdfapp_t *app, char *msg)
 {
   winerror(app, msg);
 }
 //}}}
 //{{{
-char *pdfapp_version(pdfapp_t *app)
+char *pdfapp_version (pdfapp_t *app)
 {
   return
     "MuPDF " FZ_VERSION "\n"
@@ -86,7 +85,7 @@ char *pdfapp_version(pdfapp_t *app)
 }
 //}}}
 //{{{
-char *pdfapp_usage(pdfapp_t *app)
+char *pdfapp_usage (pdfapp_t *app)
 {
   return
     "L\t\t-- rotate left\n"
@@ -127,7 +126,7 @@ char *pdfapp_usage(pdfapp_t *app)
 //}}}
 
 //{{{
-void pdfapp_init(fz_context *ctx, pdfapp_t *app)
+void pdfapp_init (fz_context *ctx, pdfapp_t *app)
 {
   memset(app, 0, sizeof(pdfapp_t));
   app->scrw = 640;
@@ -154,19 +153,19 @@ void pdfapp_init(fz_context *ctx, pdfapp_t *app)
 }
 //}}}
 //{{{
-void pdfapp_setresolution(pdfapp_t *app, int res)
+void pdfapp_setresolution (pdfapp_t *app, int res)
 {
   app->resolution = res;
 }
 //}}}
 //{{{
-void pdfapp_invert(pdfapp_t *app, fz_rect rect)
+void pdfapp_invert (pdfapp_t *app, fz_rect rect)
 {
   fz_invert_pixmap_rect(app->ctx, app->image, fz_round_rect(rect));
 }
 //}}}
 //{{{
-void pdfapp_reloadfile(pdfapp_t *app)
+void pdfapp_reloadfile (pdfapp_t *app)
 {
   char filename[PATH_MAX];
   fz_strlcpy(filename, app->docpath, PATH_MAX);
@@ -175,7 +174,7 @@ void pdfapp_reloadfile(pdfapp_t *app)
 }
 //}}}
 //{{{
-static void event_cb(fz_context *ctx, pdf_document *doc, pdf_doc_event *event, void *data)
+static void event_cb (fz_context *ctx, pdf_document *doc, pdf_doc_event *event, void *data)
 {
   pdfapp_t *app = (pdfapp_t *)data;
 
@@ -230,32 +229,15 @@ static void event_cb(fz_context *ctx, pdf_document *doc, pdf_doc_event *event, v
 }
 //}}}
 //{{{
-void pdfapp_open(pdfapp_t *app, char *filename, int reload)
+void pdfapp_open (pdfapp_t *app, char *filename, int reload)
 {
   pdfapp_open_progressive(app, filename, reload, 0);
 }
 //}}}
 
-#ifdef HAVE_CURL
-//{{{
-static void
-pdfapp_more_data(void *app_, int complete)
-{
-  pdfapp_t *app = (pdfapp_t *)app_;
-
-  if (complete && app->outline_deferred == PDFAPP_OUTLINE_DEFERRED)
-  {
-    app->outline_deferred = PDFAPP_OUTLINE_LOAD_NOW;
-    winreloadpage(app);
-  }
-  else if (app->incomplete)
-    winreloadpage(app);
-}
-//}}}
-#endif
 
 //{{{
-static int make_fake_doc(pdfapp_t *app)
+static int make_fake_doc (pdfapp_t *app)
 {
   fz_context *ctx = app->ctx;
   pdf_document *pdf = NULL;
@@ -302,7 +284,7 @@ static int make_fake_doc(pdfapp_t *app)
 }
 //}}}
 //{{{
-void pdfapp_open_progressive(pdfapp_t *app, char *filename, int reload, int bps)
+void pdfapp_open_progressive (pdfapp_t *app, char *filename, int reload, int bps)
 {
   fz_context *ctx = app->ctx;
   char *password = "";
@@ -321,31 +303,6 @@ void pdfapp_open_progressive(pdfapp_t *app, char *filename, int reload, int bps)
 
     fz_set_use_document_css(ctx, app->layout_use_doc_css);
 
-#ifdef HAVE_CURL
-    if (!strncmp(filename, "http://", 7) || !strncmp(filename, "https://", 8))
-    {
-      app->stream = fz_stream_from_curl(ctx, filename, pdfapp_more_data, app);
-      while (1)
-      {
-        fz_try(ctx)
-        {
-          fz_seek(ctx, app->stream, 0, SEEK_SET);
-          app->doc = fz_open_document_with_stream(ctx, filename, app->stream);
-        }
-        fz_catch(ctx)
-        {
-          if (fz_caught(ctx) == FZ_ERROR_TRYLATER)
-          {
-            pdfapp_warn(app, "not enough data to open yet");
-            continue;
-          }
-          fz_rethrow(ctx);
-        }
-        break;
-      }
-    }
-    else
-#endif
     if (bps == 0)
     {
       app->doc = fz_open_document(ctx, filename);
@@ -482,7 +439,7 @@ void pdfapp_open_progressive(pdfapp_t *app, char *filename, int reload, int bps)
 }
 //}}}
 //{{{
-void pdfapp_close(pdfapp_t *app)
+void pdfapp_close (pdfapp_t *app)
 {
   fz_drop_display_list(app->ctx, app->page_list);
   app->page_list = NULL;
@@ -520,15 +477,11 @@ void pdfapp_close(pdfapp_t *app)
   fz_drop_document(app->ctx, app->doc);
   app->doc = NULL;
 
-#ifdef HAVE_CURL
-  fz_drop_stream(app->ctx, app->stream);
-#endif
-
   fz_flush_warnings(app->ctx);
 }
 //}}}
 //{{{
-static int gen_tmp_file(char *buf, int len)
+static int gen_tmp_file (char *buf, int len)
 {
   int i;
   char *name = strrchr(buf, '/');
@@ -555,7 +508,7 @@ static int gen_tmp_file(char *buf, int len)
 }
 //}}}
 //{{{
-static int pdfapp_save(pdfapp_t *app)
+static int pdfapp_save (pdfapp_t *app)
 {
   char buf[PATH_MAX];
 
@@ -609,7 +562,7 @@ static int pdfapp_save(pdfapp_t *app)
 }
 //}}}
 //{{{
-int pdfapp_preclose(pdfapp_t *app)
+int pdfapp_preclose (pdfapp_t *app)
 {
   pdf_document *idoc = pdf_specifics(app->ctx, app->doc);
 
@@ -633,13 +586,13 @@ int pdfapp_preclose(pdfapp_t *app)
 //}}}
 
 //{{{
-static void pdfapp_viewctm(fz_matrix *mat, pdfapp_t *app)
+static void pdfapp_viewctm (fz_matrix *mat, pdfapp_t *app)
 {
   *mat = fz_transform_page(app->page_bbox, app->resolution, app->rotate);
 }
 //}}}
 //{{{
-static void pdfapp_panview(pdfapp_t *app, int newx, int newy)
+static void pdfapp_panview (pdfapp_t *app, int newx, int newy)
 {
   int image_w = 0;
   int image_h = 0;
@@ -673,7 +626,7 @@ static void pdfapp_panview(pdfapp_t *app, int newx, int newy)
 }
 //}}}
 //{{{
-static void pdfapp_loadpage(pdfapp_t *app, int no_cache)
+static void pdfapp_loadpage (pdfapp_t *app, int no_cache)
 {
   fz_device *mdev = NULL;
   int errored = 0;
@@ -773,7 +726,7 @@ static void pdfapp_loadpage(pdfapp_t *app, int no_cache)
 }
 //}}}
 //{{{
-static void pdfapp_recreate_annotationslist(pdfapp_t *app)
+static void pdfapp_recreate_annotationslist (pdfapp_t *app)
 {
   fz_device *mdev = NULL;
   int errored = 0;
@@ -818,7 +771,7 @@ static void pdfapp_recreate_annotationslist(pdfapp_t *app)
 }
 //}}}
 //{{{
-static void pdfapp_runpage(pdfapp_t *app, fz_device *dev, const fz_matrix ctm, fz_rect scissor, fz_cookie *cookie)
+static void pdfapp_runpage (pdfapp_t *app, fz_device *dev, const fz_matrix ctm, fz_rect scissor, fz_cookie *cookie)
 {
   if (app->page_list)
     fz_run_display_list(app->ctx, app->page_list, dev, ctm, scissor, cookie);
@@ -829,7 +782,7 @@ static void pdfapp_runpage(pdfapp_t *app, fz_device *dev, const fz_matrix ctm, f
 
 #define MAX_TITLE 256
 //{{{
-static void pdfapp_updatepage(pdfapp_t *app)
+static void pdfapp_updatepage (pdfapp_t *app)
 {
   if (pdf_update_page(app->ctx, (pdf_page*)app->page))
   {
@@ -843,7 +796,7 @@ static void pdfapp_updatepage(pdfapp_t *app)
 }
 //}}}
 //{{{
-void pdfapp_reloadpage(pdfapp_t *app)
+void pdfapp_reloadpage (pdfapp_t *app)
 {
   if (app->outline_deferred == PDFAPP_OUTLINE_LOAD_NOW)
   {
@@ -857,7 +810,7 @@ void pdfapp_reloadpage(pdfapp_t *app)
 }
 //}}}
 //{{{
-static void pdfapp_showpage(pdfapp_t *app, int loadpage, int drawpage, int repaint, int transition, int searching)
+static void pdfapp_showpage (pdfapp_t *app, int loadpage, int drawpage, int repaint, int transition, int searching)
 {
   char buf[MAX_TITLE];
   fz_device *idev = NULL;
@@ -1025,13 +978,13 @@ static void pdfapp_showpage(pdfapp_t *app, int loadpage, int drawpage, int repai
 }
 //}}}
 //{{{
-static void pdfapp_gotouri(pdfapp_t *app, char *uri)
+static void pdfapp_gotouri (pdfapp_t *app, char *uri)
 {
   winopenuri(app, uri);
 }
 //}}}
 //{{{
-void pdfapp_gotopage(pdfapp_t *app, int number)
+void pdfapp_gotopage (pdfapp_t *app, int number)
 {
   app->issearching = 0;
   winrepaint(app);
@@ -1055,7 +1008,7 @@ void pdfapp_gotopage(pdfapp_t *app, int number)
 }
 //}}}
 //{{{
-void pdfapp_inverthit(pdfapp_t *app)
+void pdfapp_inverthit (pdfapp_t *app)
 {
   fz_rect bbox;
   fz_matrix ctm;
@@ -1072,7 +1025,7 @@ void pdfapp_inverthit(pdfapp_t *app)
 }
 //}}}
 //{{{
-static void pdfapp_search_in_direction(pdfapp_t *app, enum panning *panto, int dir)
+static void pdfapp_search_in_direction (pdfapp_t *app, enum panning *panto, int dir)
 {
   int firstpage, page;
 
@@ -1125,8 +1078,9 @@ static void pdfapp_search_in_direction(pdfapp_t *app, enum panning *panto, int d
   winrepaint(app);
 }
 //}}}
+
 //{{{
-void pdfapp_onresize(pdfapp_t *app, int w, int h)
+void pdfapp_onresize (pdfapp_t *app, int w, int h)
 {
   if (app->winw != w || app->winh != h)
   {
@@ -1137,8 +1091,9 @@ void pdfapp_onresize(pdfapp_t *app, int w, int h)
   }
 }
 //}}}
+
 //{{{
-void pdfapp_autozoom_vertical(pdfapp_t *app)
+void pdfapp_autozoom_vertical (pdfapp_t *app)
 {
   app->resolution *= (float) app->winh / fz_pixmap_height(app->ctx, app->image);
   if (app->resolution > MAXRES)
@@ -1149,7 +1104,7 @@ void pdfapp_autozoom_vertical(pdfapp_t *app)
 }
 //}}}
 //{{{
-void pdfapp_autozoom_horizontal(pdfapp_t *app)
+void pdfapp_autozoom_horizontal (pdfapp_t *app)
 {
   app->resolution *= (float) app->winw / fz_pixmap_width(app->ctx, app->image);
   if (app->resolution > MAXRES)
@@ -1160,7 +1115,7 @@ void pdfapp_autozoom_horizontal(pdfapp_t *app)
 }
 //}}}
 //{{{
-void pdfapp_autozoom(pdfapp_t *app)
+void pdfapp_autozoom (pdfapp_t *app)
 {
   float page_aspect = (float) fz_pixmap_width(app->ctx, app->image) / fz_pixmap_height(app->ctx, app->image);
   float win_aspect = (float) app->winw / app->winh;
@@ -1170,8 +1125,9 @@ void pdfapp_autozoom(pdfapp_t *app)
     pdfapp_autozoom_vertical(app);
 }
 //}}}
+
 //{{{
-void pdfapp_onkey(pdfapp_t *app, int c, int modifiers)
+void pdfapp_onkey (pdfapp_t *app, int c, int modifiers)
 {
   int oldpage = app->pageno;
   enum panning panto = PAN_TO_TOP;
@@ -1577,7 +1533,7 @@ void pdfapp_onkey(pdfapp_t *app, int c, int modifiers)
 }
 //}}}
 //{{{
-static void handlescroll(pdfapp_t *app, int modifiers, int dir)
+static void handlescroll (pdfapp_t *app, int modifiers, int dir)
 {
   app->ispanning = app->iscopying = 0;
   if (modifiers & (1<<2))
@@ -1638,7 +1594,7 @@ static void handlescroll(pdfapp_t *app, int modifiers, int dir)
 }
 //}}}
 //{{{
-void pdfapp_onmouse(pdfapp_t *app, int x, int y, int btn, int modifiers, int state)
+void pdfapp_onmouse (pdfapp_t *app, int x, int y, int btn, int modifiers, int state)
 {
   fz_context *ctx = app->ctx;
   fz_irect irect = { 0, 0, app->layout_w, app->layout_h };
@@ -1974,7 +1930,7 @@ void pdfapp_onmouse(pdfapp_t *app, int x, int y, int btn, int modifiers, int sta
 }
 //}}}
 //{{{
-void pdfapp_oncopy(pdfapp_t *app, unsigned short *ucsbuf, int ucslen)
+void pdfapp_oncopy (pdfapp_t *app, unsigned short *ucsbuf, int ucslen)
 {
   fz_matrix ctm;
   fz_stext_page *page = app->page_text;
@@ -2031,7 +1987,7 @@ void pdfapp_oncopy(pdfapp_t *app, unsigned short *ucsbuf, int ucslen)
 }
 //}}}
 //{{{
-void pdfapp_postblit(pdfapp_t *app)
+void pdfapp_postblit (pdfapp_t *app)
 {
   clock_t time;
   float seconds;
