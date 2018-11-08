@@ -1,5 +1,4 @@
 #ifndef FZ_CONFIG_H
-
 #define FZ_CONFIG_H
 
 /*
@@ -119,37 +118,37 @@
 #define FZ_ENABLE_PDF 1
 #endif /* FZ_ENABLE_PDF */
 
-#ifndef FZ_ENABLE_XPS
-#define FZ_ENABLE_XPS 1
-#endif /* FZ_ENABLE_XPS */
+//#ifndef FZ_ENABLE_XPS
+//#define FZ_ENABLE_XPS 1
+//#endif /* FZ_ENABLE_XPS */
 
-#ifndef FZ_ENABLE_SVG
-#define FZ_ENABLE_SVG 1
-#endif /* FZ_ENABLE_SVG */
+//#ifndef FZ_ENABLE_SVG
+//#define FZ_ENABLE_SVG 1
+//#endif /* FZ_ENABLE_SVG */
 
-#ifndef FZ_ENABLE_CBZ
-#define FZ_ENABLE_CBZ 1
-#endif /* FZ_ENABLE_CBZ */
+//#ifndef FZ_ENABLE_CBZ
+//#define FZ_ENABLE_CBZ 1
+//#endif /* FZ_ENABLE_CBZ */
 
-#ifndef FZ_ENABLE_IMG
-#define FZ_ENABLE_IMG 1
-#endif /* FZ_ENABLE_IMG */
+//#ifndef FZ_ENABLE_IMG
+//#define FZ_ENABLE_IMG 1
+//#endif /* FZ_ENABLE_IMG */
 
-#ifndef FZ_ENABLE_HTML
-#define FZ_ENABLE_HTML 1
-#endif /* FZ_ENABLE_HTML */
+//#ifndef FZ_ENABLE_HTML
+//#define FZ_ENABLE_HTML 1
+//#endif /* FZ_ENABLE_HTML */
 
-#ifndef FZ_ENABLE_EPUB
-#define FZ_ENABLE_EPUB 1
-#endif /* FZ_ENABLE_EPUB */
+//#ifndef FZ_ENABLE_EPUB
+//#define FZ_ENABLE_EPUB 1
+//#endif /* FZ_ENABLE_EPUB */
 
-#ifndef FZ_ENABLE_GPRF
-#define FZ_ENABLE_GPRF 0
-#endif /* FZ_ENABLE_GPRF */
+//#ifndef FZ_ENABLE_GPRF
+//#define FZ_ENABLE_GPRF 0
+//#endif /* FZ_ENABLE_GPRF */
 
-#ifndef FZ_ENABLE_JPX
-#define FZ_ENABLE_JPX 1
-#endif /* FZ_ENABLE_JPX */
+//#ifndef FZ_ENABLE_JPX
+//#define FZ_ENABLE_JPX 1
+//#endif /* FZ_ENABLE_JPX */
 
 #ifndef FZ_ENABLE_JS
 #define FZ_ENABLE_JS 1

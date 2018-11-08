@@ -1024,8 +1024,6 @@
     <ClCompile Include="..\..\source\fitz\writer.c" />
     <ClCompile Include="..\..\source\fitz\xml.c" />
     <ClCompile Include="..\..\source\fitz\zip.c" />
-    <ClCompile Include="..\..\source\gprf\gprf-doc.c" />
-    <ClCompile Include="..\..\source\gprf\gprf-skeleton.c" />
     <ClCompile Include="..\..\source\html\css-apply.c" />
     <ClCompile Include="..\..\source\html\css-parse.c" />
     <ClCompile Include="..\..\source\html\epub-doc.c" />
@@ -1078,22 +1076,6 @@
     <ClCompile Include="..\..\source\pdf\pdf-write.c" />
     <ClCompile Include="..\..\source\pdf\pdf-xobject.c" />
     <ClCompile Include="..\..\source\pdf\pdf-xref.c" />
-    <ClCompile Include="..\..\source\svg\svg-color.c" />
-    <ClCompile Include="..\..\source\svg\svg-doc.c" />
-    <ClCompile Include="..\..\source\svg\svg-parse.c" />
-    <ClCompile Include="..\..\source\svg\svg-run.c" />
-    <ClCompile Include="..\..\source\xps\xps-common.c" />
-    <ClCompile Include="..\..\source\xps\xps-doc.c" />
-    <ClCompile Include="..\..\source\xps\xps-glyphs.c" />
-    <ClCompile Include="..\..\source\xps\xps-gradient.c" />
-    <ClCompile Include="..\..\source\xps\xps-image.c" />
-    <ClCompile Include="..\..\source\xps\xps-link.c" />
-    <ClCompile Include="..\..\source\xps\xps-outline.c" />
-    <ClCompile Include="..\..\source\xps\xps-path.c" />
-    <ClCompile Include="..\..\source\xps\xps-resource.c" />
-    <ClCompile Include="..\..\source\xps\xps-tile.c" />
-    <ClCompile Include="..\..\source\xps\xps-util.c" />
-    <ClCompile Include="..\..\source\xps\xps-zip.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\mupdf\fitz.h" />
@@ -1192,10 +1174,6 @@
   <ItemGroup>
     <ProjectReference Include="libluratech.vcxproj">
       <Project>{b0091365-c9ba-4f40-ae2b-ef93702871b2}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="libpkcs7.vcxproj">
-      <Project>{22462382-b30d-42a5-bf07-ee1a35e25d21}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="libresources.vcxproj">

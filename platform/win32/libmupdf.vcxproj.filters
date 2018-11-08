@@ -4,12 +4,6 @@
     <Filter Include="cbz">
       <UniqueIdentifier>{acc1d1cf-0146-4e30-8fbe-67f62ef57492}</UniqueIdentifier>
     </Filter>
-    <Filter Include="svg">
-      <UniqueIdentifier>{545cede0-b133-4040-9849-edce345fc839}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="xps">
-      <UniqueIdentifier>{985b41c2-e1f6-4d6c-ad7a-6df5d8b9dfc4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="fitz">
       <UniqueIdentifier>{9e54aa1f-52b6-42f3-86f6-39adf4dcec98}</UniqueIdentifier>
     </Filter>
@@ -28,9 +22,6 @@
     <Filter Include="html">
       <UniqueIdentifier>{c7f67ab0-84e3-4bd4-b453-3673382996a3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="gprf">
-      <UniqueIdentifier>{cd4f0ea1-0c9c-4b9e-91a7-47931b2dd28f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="generated">
       <UniqueIdentifier>{bb3dba67-36c1-47c2-96c7-5b5a80d25d30}</UniqueIdentifier>
     </Filter>
@@ -41,54 +32,6 @@
     </ClCompile>
     <ClCompile Include="..\..\source\cbz\muimg.c">
       <Filter>cbz</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\svg\svg-color.c">
-      <Filter>svg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\svg\svg-doc.c">
-      <Filter>svg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\svg\svg-parse.c">
-      <Filter>svg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\svg\svg-run.c">
-      <Filter>svg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\xps\xps-common.c">
-      <Filter>xps</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\xps\xps-doc.c">
-      <Filter>xps</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\xps\xps-glyphs.c">
-      <Filter>xps</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\xps\xps-gradient.c">
-      <Filter>xps</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\xps\xps-image.c">
-      <Filter>xps</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\xps\xps-link.c">
-      <Filter>xps</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\xps\xps-outline.c">
-      <Filter>xps</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\xps\xps-path.c">
-      <Filter>xps</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\xps\xps-resource.c">
-      <Filter>xps</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\xps\xps-tile.c">
-      <Filter>xps</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\xps\xps-util.c">
-      <Filter>xps</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\xps\xps-zip.c">
-      <Filter>xps</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\fitz\archive.c">
       <Filter>fitz</Filter>
@@ -578,12 +521,6 @@
     </ClCompile>
     <ClCompile Include="..\..\source\html\html-layout.c">
       <Filter>html</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\gprf\gprf-doc.c">
-      <Filter>gprf</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\gprf\gprf-skeleton.c">
-      <Filter>gprf</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
