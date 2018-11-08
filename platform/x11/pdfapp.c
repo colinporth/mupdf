@@ -1705,11 +1705,11 @@ void pdfapp_onmouse (pdfapp_t *app, int x, int y, int btn, int modifiers, int st
             {
               /* Signature is signed. Check the signature */
               ebuf[0] = 0;
-              if (pdf_check_signature(ctx, idoc, widget, ebuf, sizeof(ebuf)))
-              {
-                winwarn(app, "Signature is valid");
-              }
-              else
+              //if (pdf_check_signature(ctx, idoc, widget, ebuf, sizeof(ebuf)))
+              //{
+              //  winwarn(app, "Signature is valid");
+              //}
+              //else
               {
                 if (ebuf[0] == 0)
                   winwarn(app, "Signature check failed for unknown reason");

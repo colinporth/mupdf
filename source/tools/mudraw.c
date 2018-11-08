@@ -1940,11 +1940,7 @@ int main (int argc, char **argv)
         if (layer_config)
           apply_layer_config(ctx, doc, layer_config);
 
-        if (output_format == OUT_GPROOF)
-        {
-          fz_save_gproof(ctx, filename, doc, output, resolution, "", "");
-        }
-        else
+        
         {
           if (fz_optind == argc || !fz_is_page_range(ctx, argv[fz_optind]))
             drawrange(ctx, doc, "1-N");
